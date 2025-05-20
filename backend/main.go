@@ -76,7 +76,7 @@ func main() {
 
 	// `/ping` エンドポイント
 	e.GET("/ping", func(c echo.Context) error {
-		return c.String(http.StatusOK, "pongああああ")
+		return c.String(http.StatusOK, "pongあああああ")
 	})
 
 	// `/db_check` エンドポイント（DB接続確認用）

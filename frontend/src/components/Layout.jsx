@@ -27,6 +27,7 @@ const collapsedWidth = 64;
 const menuItems = [
   { text: 'ホーム', icon: <HomeIcon />, path: '/' },
   { text: '検索一覧', icon: <SearchIcon />, path: '/search' },
+  { text: '商品一覧', icon: <SearchIcon />, path: '/ProductList' },
   { text: 'データ入力', icon: <InputIcon />, path: '/input' },
   { text: '設定', icon: <SettingsIcon />, path: '/settings' }
 ];

@@ -33,25 +33,39 @@ const menuItems = [
 ];
 
 const Layout = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [open, setOpen] = useState(true);
   const location = useLocation();
-  const toggleDrawer = () => setSidebarOpen(!sidebarOpen);
 
   return (
-    <Box sx={{ display: 'flex', width: '100vw', height: '100vh' }}>
+    <Box sx={{ display: 'flex' }}>
       <CssBaseline />
 
-      {/* サイドバー */}
+      {/* AppBar */}
+      <AppBar position="fixed" sx={{ zIndex: 1300 }}>
+        <Toolbar>
+          <IconButton onClick={() => setOpen(!open)} sx={{ mr: 2, color: '#fff' }}>
+            <MenuIcon />
+          </IconButton>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            Portfolio App
+          </Typography>
+          <AccountCircleIcon />
+        </Toolbar>
+      </AppBar>
+
+      {/* 標準的な permanent Drawer */}
       <Drawer
         variant="permanent"
+        open={open} // ← ★正式な API
         sx={{
-          width: sidebarOpen ? drawerWidth : collapsedWidth,
+          width: open ? drawerWidth : collapsedWidth,
           flexShrink: 0,
+          whiteSpace: 'nowrap',
+          transition: 'width 0.3s ease',
           '& .MuiDrawer-paper': {
-            width: sidebarOpen ? drawerWidth : collapsedWidth,
+            width: open ? drawerWidth : collapsedWidth,
+            transition: 'width 0.3s ease',
             overflowX: 'hidden',
-            transition: 'width 0.3s ease-in-out',
-            whiteSpace: 'nowrap',
             boxSizing: 'border-box'
           }
         }}
@@ -66,18 +80,14 @@ const Layout = () => {
                 selected={location.pathname === item.path}
                 sx={{
                   minHeight: 48,
-                  justifyContent: sidebarOpen ? 'initial' : 'center',
-                  px: 2.5,
-                  '&:hover': {
-                    backgroundColor: '#eeeeee',
-                    transition: 'background-color 0.2s'
-                  }
+                  justifyContent: open ? 'initial' : 'center',
+                  px: 2.5
                 }}
               >
                 <ListItemIcon
                   sx={{
                     minWidth: 0,
-                    mr: sidebarOpen ? 3 : 'auto',
+                    mr: open ? 3 : 'auto',
                     justifyContent: 'center'
                   }}
                 >
@@ -86,56 +96,33 @@ const Layout = () => {
 <ListItemText
   primary={item.text}
   sx={{
-    opacity: sidebarOpen ? 1 : 0,
-    transition: 'opacity 0.3s ease-in-out',
+    position: 'absolute',
+    left: open ? 60 : 32,        // ← アイコンの近くまで寄る！（重なり効果）
+    opacity: open ? 1 : 0,       // ← 透明にするだけ
+    transition: 'opacity 0.25s ease, left 0.3s ease',
     whiteSpace: 'nowrap',
+    pointerEvents: 'none'
   }}
 />
+
               </ListItemButton>
             </ListItem>
           ))}
         </List>
       </Drawer>
 
-      {/* 右側：AppBar + Main */}
-      <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-        {/* AppBar */}
-        <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-          <Toolbar>
-            <IconButton
-              onClick={toggleDrawer}
-              sx={{
-                mr: 2,
-                color: 'inherit',
-                '&:focus': { outline: 'none' },
-                '&:focus-visible': { outline: 'none' }
-              }}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" sx={{ flexGrow: 1 }}>
-              Portfolio App
-            </Typography>
-            <AccountCircleIcon />
-          </Toolbar>
-        </AppBar>
-
-        {/* コンテンツ */}
-<Box
-  component="main"
-  sx={{
-    flexGrow: 1,
-    padding: 3,
-    paddingTop: '80px',
-    marginLeft: `${collapsedWidth}px`, // 初期値を最小幅に統一
-    transition: 'margin-left 0.3s ease-in-out',
-    ...(sidebarOpen && {
-      marginLeft: `${drawerWidth}px`, // 開いてるときだけ上書き
-    })
-  }}
->
-          <Outlet />
-        </Box>
+      {/* Main */}
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          pt: '80px',
+          ml: open ? `${drawerWidth}px` : `${collapsedWidth}px`,
+          transition: 'margin-left 0.3s ease',
+        }}
+      >
+        <Outlet />
       </Box>
     </Box>
   );
